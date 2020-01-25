@@ -4,8 +4,8 @@ const userSchema = require('./user');
 const jarSchema = mongoose.Schema( {
   title: { type: String, required: true},
   description: { type: String, required: true },
-  balance: { type: Float32Array, required: true },
-  charge: { type: Float32Array, required: true },
+  balance: { type: mongoose.Types.Decimal128, required: true },
+  charge: { type: mongoose.Types.Decimal128, required: true },
   users: { type: Array[userSchema], required: true }
 });
 
