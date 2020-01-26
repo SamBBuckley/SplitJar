@@ -33,6 +33,20 @@ app.use((req, res, next) => {
 // Rest Get requests
 
 //Users
+app.post('/api/v1/users/validate', (req, res, next) => {
+  const email = req.body.username;
+  const password = req.body.password;
+
+  User.findOne( { email, password })
+  .then(results => {
+    if (results === null) {
+      res.status(200).json( {message: "Bad username and password pair"});
+    } else {
+      res.status(200).json( {message: "User found", user: results });
+    }
+  });
+});
+
 app.get('/api/v1/users', (req, res, next) => {
   User.find()
   .then(users => {
@@ -83,6 +97,7 @@ app.post('/api/v1/adduser', (req, res, next) => {
     });
   });
 });
+
 
 
 
