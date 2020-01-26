@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema( {
   email: { type: String, required: true },
   name: { type: String, required: true },
   password: { type: String, required: true },
-  balance: { type: mongoose.Types.Decimal128, required: true},
+  balance: { type: Number, required: true},
 
 });
 
