@@ -30,6 +30,36 @@ app.use((req, res, next) => {
   next();
 });
 
+//GENERIC
+
+app.get('/api/v1/exchange/user/:userID/jar/:jarID/amount/:amount', (req, res, next) => {
+  User.findOne( {id: req.params.userID} )
+  .then(foundUser => {
+    if(foundUser === null) {
+      res.status(404).json({message: 'An account with that id does not exist'});
+    } else {
+      foundUser.balance = foundUser.balance - req.params.amount;
+      foundUser.save().then(userResult => {
+        Jar.find({_id: req.params.jarID}).then(foundJar => {
+          if(foundJar == null) {
+            res.status(404).json({
+              message: "No jar with that Id exists"
+            });
+          } else {
+            foundJar.forEach(jar => {
+              jar.balance = jar.balance + req.params.amount;
+              jar.save().then(jarResult => {
+                res.status(201).json({message: 'Succesfully set the balance of the user and jar', user: userResult, jar: jarResult});
+              })
+            });
+          }
+        });
+
+      });
+    }
+  });
+});
+
 //Users
 //Posts
 app.post('/api/v1/adduser', (req, res, next) => {
@@ -52,6 +82,19 @@ app.post('/api/v1/users/validate', (req, res, next) => {
   const email = req.body.username;
   const password = req.body.password;
 
+  User.findOne( { email, password })
+  .then(results => {
+    if (results === null) {
+      res.status(200).json( {message: "Bad username and password pair"});
+    } else {
+      res.status(200).json( {message: "User found", user: results });
+    }
+  });
+});
+
+app.get('/api/v1/users/validate/username/:userID/password/:userPass', (req, res, next) => {
+  const email = req.params.userID;
+  const password = req.params.userPass;
   User.findOne( { email, password })
   .then(results => {
     if (results === null) {
